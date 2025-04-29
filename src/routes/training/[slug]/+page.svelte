@@ -56,16 +56,9 @@
 
 <section class="px-6 py-10 w-full">
     <div class="max-w-7xl mx-auto">
-        <div
-            class="flex md:flex-row flex-col md:items-baseline items-center justify-between"
-        >
-            <h2 class="text-2xl font-bold text-white">
-                Order History of <span
-                    class="md:text-4xl bg-white text-black px-3 py-2 rounded-2xl ml-3"
-                    >{formatSlug(slug)}</span
-                >
-            </h2>
-        </div>
+            <p class="text-xl text-center font-bold md:text-4xl bg-white text-black px-5 py-2 rounded-2xl ml-3">
+                {formatSlug(slug)}
+            </p>
 
         <div class="overflow-x-auto rounded-lg mt-10 shadow-md bg-[#1f2937]">
             <table class="w-full text-sm text-left text-black">

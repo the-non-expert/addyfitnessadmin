@@ -4,7 +4,7 @@
 </script>
 
 <div
-    class="min-h-screen w-full bg-slate-900 bg-grid flex items-center justify-center"
+    class="min-h-screen w-full flex items-center justify-center"
 >
     <!-- Content -->
     <section
@@ -56,7 +56,7 @@
                             <span>99.9% Uptime This Month</span>
                         </div>
                     </div> -->
-                    <NavButtons/>
+                    <NavButtons />
                 </div>
             </div>
         </div>
@@ -74,20 +74,5 @@
         font-family: "Inter", serif;
         font-optical-sizing: auto;
         font-style: normal;
-    }
-
-    .bg-grid {
-        background-size: 15px 15px;
-        background-image: linear-gradient(
-                to right,
-                rgba(255, 255, 255, 0.05) 1px,
-                transparent 1px
-            ),
-            linear-gradient(
-                to bottom,
-                rgba(255, 255, 255, 0.05) 1px,
-                transparent 1px
-            );
-        filter: blur(0.5px);
     }
 </style>
