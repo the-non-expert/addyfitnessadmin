@@ -1,11 +1,31 @@
 <script>
-    import { fly } from "svelte/transition";
     import NavButtons from "./NavButtons.svelte";
+    import { user, logout, expiry } from "$lib/stores/auth";
+    import { LogOut } from "lucide-svelte";
+    import { onDestroy } from "svelte";
+
+    let remaining = 0;
+    let interval;
+
+    $: if ($expiry) {
+        const update = () => {
+            const now = Date.now();
+            const diff = Math.max(0, Math.floor(($expiry - now) / 1000));
+            remaining = diff;
+            if (diff <= 0) clearInterval(interval);
+        };
+
+        update();
+        clearInterval(interval);
+        interval = setInterval(update, 1000);
+    }
+
+    onDestroy(() => {
+        clearInterval(interval);
+    });
 </script>
 
-<div
-    class="min-h-screen w-full flex items-center justify-center"
->
+<div class="min-h-screen w-full flex items-center justify-center">
     <!-- Content -->
     <section
         class="relative w-full flex items-center justify-center px-4 py-10"
@@ -13,6 +33,14 @@
         <div class="max-w-7xl mx-auto text-center">
             <div class="space-y-2">
                 <div class="space-y-6">
+                    <div class="flex justify-center">
+                        <button
+                            on:click={logout}
+                            class="text-white flex items-center gap-2 px-4 py-2 bg-slate-700 rounded hover:bg-white hover:text-black cursor-pointer"
+                        >
+                            <LogOut class="w-5 h-5" /> Log Out
+                        </button>
+                    </div>
                     <!-- Small text at top -->
                     <p class="text-gray-400 text-sm">
                         Exclusive Access · Admin Panel 🚦
@@ -22,9 +50,17 @@
                     <h1
                         class="raleway-font text-4xl md:text-5xl font-bold text-white"
                     >
-                        Welcome, <span class="text-[#F41952]">Admin</span><br />
+                        Welcome, <span class="text-[#F41952]"
+                            >{$user ? $user : "Admin"}</span
+                        ><br />
                         Your Control Room Awaits
                     </h1>
+
+                    {#if $user}
+                        <p class="text-sm text-gray-400 italic">
+                            You have to login again in: {remaining}s
+                        </p>
+                    {/if}
 
                     <!-- Description -->
                     <p class="text-gray-300 mx-auto text-xl inter-font">
