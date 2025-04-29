@@ -1,5 +1,6 @@
 <script>
     import { fly } from "svelte/transition";
+    import NavButtons from "./NavButtons.svelte";
 </script>
 
 <div
@@ -38,7 +39,7 @@
                     </p>
 
                     <!-- Metrics - Make them relevant to admin work -->
-                    <div
+                    <!-- <div
                         class="flex flex-col sm:flex-row gap-4 justify-center mt-8"
                     >
                         <div
@@ -46,16 +47,6 @@
                             transition:fly={{ y: 20, duration: 600 }}
                         >
                             <span>10K+ User Records Managed</span>
-                            <svg
-                                class="w-6 h-6"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                            >
-                                <path
-                                    d="M13.5 2L4 14H12L10.5 22L20 10H12L13.5 2Z"
-                                    fill="currentColor"
-                                />
-                            </svg>
                         </div>
 
                         <div
@@ -63,18 +54,9 @@
                             transition:fly={{ y: 20, duration: 800 }}
                         >
                             <span>99.9% Uptime This Month</span>
-                            <svg
-                                class="w-6 h-6"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                            >
-                                <path
-                                    d="M13.5 2L4 14H12L10.5 22L20 10H12L13.5 2Z"
-                                    fill="currentColor"
-                                />
-                            </svg>
                         </div>
-                    </div>
+                    </div> -->
+                    <NavButtons/>
                 </div>
             </div>
         </div>
