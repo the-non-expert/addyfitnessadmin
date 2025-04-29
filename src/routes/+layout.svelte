@@ -23,6 +23,5 @@ class="min-h-screen w-full bg-slate-900 bg-grid items-center justify-center"
                 rgba(255, 255, 255, 0.05) 1px,
                 transparent 1px
             );
-        filter: blur(0.5px);
     }
 </style>
