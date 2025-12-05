@@ -4,7 +4,7 @@
  */
 
 export const API_CONFIG = {
-    BASE_URL: 'http://localhost:8000',
+    BASE_URL: ' https://api.addyfitness.com',
     TOKEN_KEY: 'addy_jwt_token',
     TOKEN_EXPIRY_KEY: 'addy_token_expiry'
 };
