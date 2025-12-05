@@ -56,7 +56,7 @@ export const login = async (password) => {
 
         console.log('Attempting login with email:', credentials.email);
 
-        const response = await fetch('http://localhost:8000/auth/login', {
+        const response = await fetch('https://api.addyfitness.com/auth/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
@@ -78,7 +78,7 @@ export const login = async (password) => {
         setToken(data.access_token);
 
         // Fetch user profile to get role and details
-        const userResponse = await fetch('http://localhost:8000/users/me', {
+        const userResponse = await fetch('https://api.addyfitness.com/users/me', {
             headers: {
                 'Authorization': `Bearer ${data.access_token}`
             }
