@@ -51,7 +51,7 @@
                         class="raleway-font text-4xl md:text-5xl font-bold text-white"
                     >
                         Welcome, <span class="text-[#F41952]"
-                            >{$user ? $user : "Admin"}</span
+                            >{$user ? ($user.full_name || $user.email) : "Admin"}</span
                         ><br />
                         Your Control Room Awaits
                     </h1>

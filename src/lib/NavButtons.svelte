@@ -1,11 +1,19 @@
 <script lang="ts">
-    let navOptions = [
-        { id: 1, name: "Training", redirectUrl: "/training" },
-        { id: 2, name: "Nutrition", redirectUrl: "/nutrition" },
-        { id: 3, name: "Healthcare", redirectUrl: "/healthcare" },
-        { id: 4, name: "Management", redirectUrl: "/management" },
-        { id: 5, name: "Careers", redirectUrl: "/careers" },
+    import { user } from "$lib/stores/auth";
+
+    // All available navigation options - direct links to table pages
+    let allNavOptions = [
+        { id: 1, name: "Training", redirectUrl: "/training/clients", roles: ["admin", "trainer"] },
+        { id: 2, name: "Nutrition", redirectUrl: "/nutrition/clients", roles: ["admin", "nutrition"] },
+        { id: 3, name: "Healthcare", redirectUrl: "/healthcare/patients", roles: ["admin", "doctor"] },
+        { id: 4, name: "Management", redirectUrl: "/management/staff", roles: ["admin"] },
+        { id: 5, name: "Careers", redirectUrl: "/careers/applications", roles: ["admin"] },
     ];
+
+    // Filter navigation options based on user role
+    $: navOptions = $user
+        ? allNavOptions.filter(option => option.roles.includes($user.role))
+        : [];
 </script>
 
 <nav class="w-full sticky top-0 z-30 px-4 py-3 bg-transparent">

@@ -12,6 +12,7 @@
     let error = "";
     let passwordInput;
     let interval;
+    let isLoading = false;
 
     onMount(() => {
         checkSession();
@@ -26,11 +27,23 @@
 
     onDestroy(() => clearInterval(interval));
 
-    const handleSubmit = () => {
-        if (!login(password)) {
-            error = "Incorrect password. Try again.";
+    const handleSubmit = async () => {
+        if (!password.trim()) {
+            error = "Please enter a password";
+            return;
+        }
+
+        isLoading = true;
+        error = "";
+
+        const success = await login(password);
+
+        if (!success) {
+            error = "Incorrect password or backend connection failed. Try again.";
             password = "";
         }
+
+        isLoading = false;
     };
 
     const handleKey = (e) => {
@@ -62,9 +75,10 @@
 
             <button
                 on:click={handleSubmit}
-                class="w-full bg-[#F41952] hover:bg-pink-700 text-white font-medium py-3 rounded-md transition duration-200"
+                disabled={isLoading}
+                class="w-full bg-[#F41952] hover:bg-pink-700 text-white font-medium py-3 rounded-md transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-                Login
+                {isLoading ? "Logging in..." : "Login"}
             </button>
 
             {#if error}
