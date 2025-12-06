@@ -11,8 +11,8 @@ const EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours (matches backend JWT expiry)
 // Map passwords to test account credentials
 const passwordToCredentials = {
     'godmode': {
-        email: 'admin@test.com',
-        password: 'TestPass123!'
+        email: 'addyfitness21@gmail.com',
+        password: 'executivemode'
     },
     'executivemode': {
         email: 'admin@test.com', // Same admin, could use different if needed
