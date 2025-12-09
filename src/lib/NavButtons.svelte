@@ -6,7 +6,7 @@
         { id: 1, name: "Training", redirectUrl: "/training/clients", roles: ["admin", "trainer"] },
         { id: 2, name: "Nutrition", redirectUrl: "/nutrition/clients", roles: ["admin", "nutrition"] },
         { id: 3, name: "Healthcare", redirectUrl: "/healthcare/patients", roles: ["admin", "doctor"] },
-        { id: 4, name: "Management", redirectUrl: "/management/staff", roles: ["admin"] },
+        { id: 4, name: "Staff Management", redirectUrl: "/management/staff", roles: ["admin"] },
         { id: 5, name: "Careers", redirectUrl: "/careers/applications", roles: ["admin"] },
     ];
 

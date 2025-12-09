@@ -483,7 +483,7 @@
                                                                 </div>
                                                                 <div class="flex items-center gap-4">
                                                                     <span class="text-sm font-semibold text-[#F41A53]">
-                                                                        ${order.amount}
+                                                                        ₹{order.amount}
                                                                     </span>
                                                                     <span class="text-xs text-gray-400">
                                                                         ID: #{order.id}
