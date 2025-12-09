@@ -3,6 +3,7 @@
     import { page } from "$app/stores";
     import { Undo2, User, Mail, Phone, Activity, Calendar, FileText, Pill, AlertCircle, Ruler, Weight, Loader2, Save } from "lucide-svelte";
     import { getPatientProfile, getMyAppointments, updateAppointmentNotes } from "$lib/api/doctor";
+    import { apiGet } from "$lib/api/config";
 
     let patient = null;
     let appointments = [];
@@ -17,19 +18,55 @@
             loading = true;
             error = null;
 
-            const [patientData, appointmentsData] = await Promise.all([
+            const [patientData, appointmentsData, ordersData] = await Promise.all([
                 getPatientProfile(patientId),
-                getMyAppointments()
+                getMyAppointments(),
+                apiGet('/orders')
             ]);
 
             patient = patientData;
 
-            // Filter appointments for this patient
-            if (Array.isArray(appointmentsData)) {
-                appointments = appointmentsData.filter(appt => appt.user_id === patientId);
-            } else if (appointmentsData.appointments) {
-                appointments = appointmentsData.appointments.filter(appt => appt.user_id === patientId);
+            // Parse orders data
+            let allOrders = [];
+            if (Array.isArray(ordersData)) {
+                allOrders = ordersData;
+            } else if (ordersData && ordersData.orders) {
+                allOrders = ordersData.orders;
             }
+
+            // Filter healthcare orders for this patient
+            const patientOrders = allOrders.filter(order =>
+                order.user_id === patientId &&
+                order.service_type === 'healthcare' &&
+                order.status === 'paid'
+            );
+
+            // Parse appointments data
+            let allAppointments = [];
+            if (Array.isArray(appointmentsData)) {
+                allAppointments = appointmentsData;
+            } else if (appointmentsData.appointments) {
+                allAppointments = appointmentsData.appointments;
+            }
+
+            // Enrich orders with appointment data (similar to table page logic)
+            appointments = patientOrders.map(order => {
+                // Find matching appointment - appointments.order_id should match orders.razorpay_order_id
+                const appointment = allAppointments.find(appt => appt.order_id === order.razorpay_order_id);
+
+                return {
+                    id: appointment?.id || order.id,
+                    appointment_date: appointment?.appointment_date || order.created_at,
+                    appointment_time: appointment?.appointment_time || null,
+                    service_name: order.title || "Healthcare Consultation",
+                    status: appointment?.status || 'scheduled',
+                    payment_status: order.status,
+                    notes: appointment?.notes || null,
+                    amount: order.amount,
+                    order_id: order.id,
+                    razorpay_order_id: order.razorpay_order_id
+                };
+            });
 
             // Sort appointments by date (most recent first)
             appointments.sort((a, b) => new Date(b.appointment_date).getTime() - new Date(a.appointment_date).getTime());
@@ -77,6 +114,31 @@
             hour: '2-digit',
             minute: '2-digit'
         });
+    }
+
+    function formatDateOfBirth(dateString: string) {
+        if (!dateString) return "Not provided";
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    }
+
+    function calculateAge(dateString: string) {
+        if (!dateString) return null;
+        const birthDate = new Date(dateString);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+
+        // Adjust age if birthday hasn't occurred this year
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+
+        return age;
     }
 </script>
 
@@ -127,7 +189,7 @@
                     <Mail class="text-[#F41A53]" size="24" />
                     Contact Information
                 </h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div class="flex items-center gap-3">
                         <Mail size="18" class="text-gray-400" />
                         <div>
@@ -140,6 +202,18 @@
                         <div>
                             <p class="text-xs text-gray-400">Phone</p>
                             <p class="font-medium">{patient.phone || "Not provided"}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <Calendar size="18" class="text-gray-400" />
+                        <div>
+                            <p class="text-xs text-gray-400">Date of Birth</p>
+                            <p class="font-medium">
+                                {formatDateOfBirth(patient.date_of_birth)}
+                                {#if calculateAge(patient.date_of_birth)}
+                                    <span class="text-gray-400 text-sm ml-1">(Age {calculateAge(patient.date_of_birth)})</span>
+                                {/if}
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -232,7 +306,12 @@
                             }">
                                 <div class="flex justify-between items-start mb-3">
                                     <div>
-                                        <p class="font-semibold text-lg">{formatDate(appointment.appointment_date)}</p>
+                                        <p class="font-semibold text-lg">
+                                            {formatDate(appointment.appointment_date)}
+                                            {#if appointment.appointment_time}
+                                                <span class="text-[#F41A53] ml-2">at {appointment.appointment_time}</span>
+                                            {/if}
+                                        </p>
                                         <p class="text-sm text-gray-400 mt-1">
                                             Service: <span class="capitalize">{appointment.service_name}</span>
                                         </p>
@@ -243,6 +322,11 @@
                                                 'text-yellow-400'
                                             }">{appointment.status}</span>
                                         </p>
+                                        {#if appointment.amount}
+                                            <p class="text-sm text-gray-400">
+                                                Amount: <span class="text-white font-semibold">₹{appointment.amount}</span>
+                                            </p>
+                                        {/if}
                                     </div>
                                     <div class="text-right">
                                         <p class="text-xs text-gray-400">Payment Status</p>

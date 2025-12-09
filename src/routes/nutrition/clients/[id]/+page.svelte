@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { page } from "$app/stores";
-    import { Undo2, User, Mail, Phone, Apple, Activity, Utensils, Clock, TrendingUp, Ruler, Weight, Loader2, Heart } from "lucide-svelte";
+    import { Undo2, User, Mail, Phone, Apple, Activity, Utensils, Clock, TrendingUp, Ruler, Weight, Loader2, Heart, Calendar } from "lucide-svelte";
     import { getClientProfile } from "$lib/api/nutrition";
 
     let client = null;
@@ -24,6 +24,31 @@
             loading = false;
         }
     });
+
+    function formatDateOfBirth(dateString: string) {
+        if (!dateString) return "Not provided";
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    }
+
+    function calculateAge(dateString: string) {
+        if (!dateString) return null;
+        const birthDate = new Date(dateString);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+
+        // Adjust age if birthday hasn't occurred this year
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+
+        return age;
+    }
 </script>
 
 <section
@@ -73,7 +98,7 @@
                     <Mail class="text-[#F41A53]" size="24" />
                     Contact Information
                 </h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div class="flex items-center gap-3">
                         <Mail size="18" class="text-gray-400" />
                         <div>
@@ -86,6 +111,18 @@
                         <div>
                             <p class="text-xs text-gray-400">Phone</p>
                             <p class="font-medium">{client.phone || "Not provided"}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <Calendar size="18" class="text-gray-400" />
+                        <div>
+                            <p class="text-xs text-gray-400">Date of Birth</p>
+                            <p class="font-medium">
+                                {formatDateOfBirth(client.date_of_birth)}
+                                {#if calculateAge(client.date_of_birth)}
+                                    <span class="text-gray-400 text-sm ml-1">(Age {calculateAge(client.date_of_birth)})</span>
+                                {/if}
+                            </p>
                         </div>
                     </div>
                 </div>
